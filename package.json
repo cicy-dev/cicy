@@ -1,0 +1,27 @@
+{
+  "name": "tui-message-client",
+  "version": "1.0.0",
+  "description": "TUI client for sending messages to Express server",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "client": "node client.js",
+    "client:cli": "node client-cli.js",
+    "client:mcp": "node client-mcp.js",
+    "client:tui": "node client-tui.js",
+    "dev:server": "npx nodemon --watch server.js server.js",
+    "dev:client": "npx nodemon --watch client.js --exec 'node client.js'",
+    "dev:cli": "npx nodemon --watch client-cli.js client-cli.js",
+    "dev:tui": "npx nodemon --watch client-tui.js client-tui.js",
+    "dev:mcp": "npm run dev:server & node client-mcp.js",
+    "dev": "npm run dev:server & npm run dev:client"
+  },
+  "dependencies": {
+    "express": "^4.18.2",
+    "blessed": "^0.1.81",
+    "axios": "^1.6.0"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.0"
+  }
+}
