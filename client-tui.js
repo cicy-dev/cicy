@@ -22,6 +22,15 @@ let totalTime = 0;
 let lastCtrlC = 0;
 const DOUBLE_PRESS_INTERVAL = 1000;
 
+// 命令列表
+const COMMANDS = ['/quit', '/q', '/clear', '/help', '/test-image', '/list'];
+
+// 输入历史
+const MAX_HISTORY_SIZE = 50;
+const commandHistory = [];
+let historyIndex = -1;
+let currentInput = '';
+
 // 创建屏幕
 const screen = blessed.screen({
     smartCSR: true,
@@ -215,14 +224,33 @@ inputBox.on('submit', async (value) => {
         inputBox.focus();
         return;
     }
-    
-    // 显示用户输入
+
+    if (commandHistory.length === 0 || commandHistory[commandHistory.length - 1] !== text) {
+        commandHistory.push(text);
+        if (commandHistory.length > MAX_HISTORY_SIZE) {
+            commandHistory.shift();
+        }
+    }
+    historyIndex = -1;
+
     addMessage(`\n> ${text}`);
-    
+
     if (text === '/quit' || text === '/q') {
         process.exit(0);
     } else if (text === '/clear') {
         messageBox.setContent('{bold}{blue-fg}=== opencode-message ==={/blue-fg}{/bold}\n{gray-fg}Server: ' + API_URL + '{/gray-fg}\n');
+        inputBox.clearValue();
+        inputBox.focus();
+        screen.render();
+    } else if (text === '/help') {
+        addMessage(`\n{cyan-fg}Commands:{/cyan-fg}`);
+        addMessage(`  {yellow-fg}/quit, /q{/yellow-fg}   - 退出程序`);
+        addMessage(`  {yellow-fg}/clear{/yellow-fg}       - 清屏`);
+        addMessage(`  {yellow-fg}/help{/yellow-fg}       - 显示帮助`);
+        addMessage(`  {yellow-fg}/list{/yellow-fg}       - 查看所有消息`);
+        addMessage(`  {yellow-fg}/test-image{/yellow-fg} - 发送测试图片`);
+        addMessage(`  {yellow-fg}curl-rpc <cmd>{/yellow-fg} - 执行 curl-rpc 命令`);
+        addMessage('');
         inputBox.clearValue();
         inputBox.focus();
         screen.render();
@@ -234,7 +262,7 @@ inputBox.on('submit', async (value) => {
     }
 });
 
-// 退出处理 - 双击 Ctrl+C
+// 快捷键处理
 inputBox.key(['C-c'], () => {
     const now = Date.now();
     if (now - lastCtrlC < DOUBLE_PRESS_INTERVAL) {
@@ -251,6 +279,75 @@ inputBox.key(['C-c'], () => {
                 screen.render();
             }
         }, DOUBLE_PRESS_INTERVAL);
+    }
+});
+
+inputBox.key(['C-l'], () => {
+    messageBox.setContent('{bold}{blue-fg}=== opencode-message ==={/blue-fg}{/bold}\n{gray-fg}Server: ' + API_URL + '{/gray-fg}\n');
+    inputBox.clearValue();
+    inputBox.focus();
+    screen.render();
+});
+
+inputBox.key(['C-u'], () => {
+    inputBox.clearValue();
+    inputBox.focus();
+    screen.render();
+});
+
+inputBox.key(['C-a'], () => {
+    const value = inputBox.getValue();
+    inputBox.setValue(value);
+    inputBox.focus();
+    screen.render();
+});
+
+inputBox.key(['C-e'], () => {
+    const value = inputBox.getValue();
+    inputBox.setValue(value);
+    inputBox.focus();
+    screen.render();
+});
+
+inputBox.key(['up'], () => {
+    if (commandHistory.length > 0 && historyIndex < commandHistory.length - 1) {
+        if (historyIndex === -1) {
+            currentInput = inputBox.getValue();
+        }
+        historyIndex++;
+        inputBox.setValue(commandHistory[commandHistory.length - 1 - historyIndex]);
+        inputBox.focus();
+        screen.render();
+    }
+});
+
+inputBox.key(['down'], () => {
+    if (historyIndex > 0) {
+        historyIndex--;
+        inputBox.setValue(commandHistory[commandHistory.length - 1 - historyIndex]);
+        inputBox.focus();
+        screen.render();
+    } else if (historyIndex === 0) {
+        historyIndex = -1;
+        inputBox.setValue(currentInput);
+        inputBox.focus();
+        screen.render();
+    }
+});
+
+inputBox.key(['tab'], () => {
+    const value = inputBox.getValue().trim();
+    if (value.startsWith('/')) {
+        const matches = COMMANDS.filter(cmd => cmd.startsWith(value));
+        if (matches.length === 1) {
+            inputBox.setValue(matches[0] + ' ');
+            inputBox.focus();
+            screen.render();
+        } else if (matches.length > 1) {
+            addMessage(`{yellow-fg}Candidates: ${matches.join(', ')}{/yellow-fg}`);
+            inputBox.focus();
+            screen.render();
+        }
     }
 });
 
