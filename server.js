@@ -1,10 +1,72 @@
 #!/usr/bin/env node
 
 const express = require('express');
-const app = express();
-const port = process.env.PORT || 13001;
 const fs = require('fs');
 const path = require('path');
+
+// 读取版本号
+const packageJson = JSON.parse(fs.readFileSync(path.join(__dirname, 'package.json'), 'utf8'));
+const VERSION = packageJson.version;
+
+// 处理命令行参数
+const args = process.argv.slice(2);
+
+if (args.includes('--help') || args.includes('-h')) {
+    console.log(`
+CICY - MCP Message Communication System v${VERSION}
+
+用法 (Usage):
+  cicy-server [选项]
+  cicy-server [options]
+
+选项 (Options):
+  -h, --help       显示帮助信息 (Show this help message)
+  -v, --version    显示版本号 (Show version number)
+  -p, --port PORT  指定端口 (Specify port, default: 13001)
+
+环境变量 (Environment Variables):
+  PORT             服务器端口 (Server port, default: 13001)
+
+示例 (Examples):
+  cicy-server                    # 启动服务器 (默认端口 13001)
+  cicy-server --port 3000        # 使用端口 3000
+  PORT=8080 cicy-server          # 使用环境变量设置端口
+
+功能 (Features):
+  • MCP (Model Context Protocol) 服务器
+  • JSON-RPC 2.0 接口
+  • 文本消息发送/接收
+  • Base64 图片传输
+  • 5 个 MCP 工具
+
+端点 (Endpoints):
+  POST /mcp        MCP JSON-RPC 接口
+  POST /message    发送消息 (Legacy REST)
+  GET  /messages   获取所有消息
+  GET  /health     健康检查
+
+文档 (Documentation):
+  https://github.com/yourusername/cicy#readme
+
+问题反馈 (Issues):
+  https://github.com/yourusername/cicy/issues
+`);
+    process.exit(0);
+}
+
+if (args.includes('--version') || args.includes('-v')) {
+    console.log(`cicy v${VERSION}`);
+    process.exit(0);
+}
+
+// 处理端口参数
+let port = process.env.PORT || 13001;
+const portIndex = args.findIndex(arg => arg === '--port' || arg === '-p');
+if (portIndex !== -1 && args[portIndex + 1]) {
+    port = parseInt(args[portIndex + 1]);
+}
+
+const app = express();
 
 app.use(express.json({ limit: '50mb' }));
 
