@@ -1,6 +1,6 @@
 {
   "name": "cicy",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "description": "CICY - MCP Message Communication System",
   "main": "server.js",
   "bin": {
