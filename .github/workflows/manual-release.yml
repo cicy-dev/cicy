@@ -1,0 +1,75 @@
+name: Manual Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number (e.g., 1.0.4)'
+        required: true
+      publish_npm:
+        description: 'Publish to npm'
+        required: false
+        default: 'false'
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: '1.21'
+
+      - name: Set up Node.js
+        if: ${{ github.event.inputs.publish_npm == 'true' }}
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      - name: Build for Linux AMD64
+        run: |
+          cd server-go
+          GOOS=linux GOARCH=amd64 go build -o cicy-go-linux-amd64 .
+          tar -czf cicy-go-linux-amd64.tar.gz cicy-go-linux-amd64
+
+      - name: Build for Darwin AMD64
+        run: |
+          cd server-go
+          GOOS=darwin GOARCH=amd64 go build -o cicy-go-darwin-amd64 .
+          tar -czf cicy-go-darwin-amd64.tar.gz cicy-go-darwin-amd64
+
+      - name: Build for Darwin ARM64
+        run: |
+          cd server-go
+          GOOS=darwin GOARCH=arm64 go build -o cicy-go-darwin-arm64 .
+          tar -czf cicy-go-darwin-arm64.tar.gz cicy-go-darwin-arm64
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.event.inputs.version }}
+          release_name: CICY v${{ github.event.inputs.version }}
+          draft: false
+          prerelease: false
+
+      - name: Upload Release Assets
+        uses: softprops/action-gh-release@v2
+        with:
+          files: |
+            server-go/cicy-go-linux-amd64.tar.gz
+            server-go/cicy-go-darwin-amd64.tar.gz
+            server-go/cicy-go-darwin-arm64.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Publish to npm
+        if: ${{ github.event.inputs.publish_npm == 'true' }}
+        run: npm publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
