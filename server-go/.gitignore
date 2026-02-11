@@ -1,0 +1,11 @@
+# Go build artifacts
+*.exe
+*.test
+*.out
+
+# Platform-specific binaries (downloaded from releases)
+cicy-go-*
+!.gitignore
+
+# Dependencies
+vendor/
