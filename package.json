@@ -10,8 +10,8 @@
   "scripts": {
     "start": "./cicy-server.sh",
     "start:node": "node server.js",
-    "start:go": "./server-go/cicy-server",
-    "build:go": "cd server-go && go build -o cicy-server .",
+    "start:go": "./server-go/cicy-go-linux-amd64",
+    "build:go": "cd server-go && go build -o cicy-go .",
     "client": "node client.js",
     "client:cli": "node client-cli.js",
     "client:mcp": "node client-mcp.js",
@@ -40,12 +40,12 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/yourusername/cicy.git"
+    "url": "https://github.com/cicy-dev/cicy.git"
   },
   "bugs": {
-    "url": "https://github.com/yourusername/cicy/issues"
+    "url": "https://github.com/cicy-dev/cicy/issues"
   },
-  "homepage": "https://github.com/yourusername/cicy#readme",
+  "homepage": "https://github.com/cicy-dev/cicy#readme",
   "engines": {
     "node": ">=14.0.0"
   },
@@ -67,5 +67,5 @@
   "devDependencies": {
     "nodemon": "^3.0.0"
   },
-  "postinstall": "if command -v go &> /dev/null && [ -f \"server-go/main.go\" ]; then cd server-go && go build -o cicy-server . && cd ..; fi"
+  "postinstall": "if command -v go &> /dev/null && [ -f \"server-go/main.go\" ]; then OS=$(uname -s | tr '[:upper:]' '[:lower:]'); ARCH=$(uname -m); case \"$ARCH\" in x86_64|amd64) ARCH=\"amd64\" ;; arm64|aarch64) ARCH=\"arm64\" ;; esac; cd server-go && go build -o \"cicy-go-$OS-$ARCH\" . && cd ..; fi"
 }

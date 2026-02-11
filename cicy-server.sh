@@ -92,7 +92,7 @@ download_source() {
     local temp_dir=$(mktemp -d)
     cd "$temp_dir"
 
-    curl -fsSL "https://github.com/$GITHUB_REPO/archive/refs/tags/v$latest_version.tar.gz" -o source.tar.gz
+        curl -fsSL "https://github.com/$GITHUB_REPO/archive/refs/heads/main.tar.gz" -o source.tar.gz
     tar -xzf source.tar.gz
 
     cd "$REPO_NAME-$latest_version/server-go"
@@ -111,8 +111,12 @@ download_source() {
 }
 
 # 优先使用本地预编译版本
-if [ -f "$SCRIPT_DIR/server-go/cicy-go" ]; then
-    echo "🚀 启动本地 Go 版本..."
+PLATFORM=$(detect_platform)
+if [ -f "$SCRIPT_DIR/server-go/cicy-go-$PLATFORM" ]; then
+    echo "🚀 启动本地 Go 版本 ($PLATFORM)..."
+    exec "$SCRIPT_DIR/server-go/cicy-go-$PLATFORM" "$@"
+elif [ -f "$SCRIPT_DIR/server-go/cicy-go" ]; then
+    echo "🚀 启动本地 Go 版本 (通用)..."
     exec "$SCRIPT_DIR/server-go/cicy-go" "$@"
 fi
 
