@@ -1,0 +1,38 @@
+# Development
+node_modules/
+.git/
+.kiro/
+.vscode/
+.idea/
+
+# Documentation
+docs/
+tui-go/
+
+# Build and temp
+*.log
+temp/
+*.tmp
+
+# Test
+test/
+*.test.js
+
+# Config
+.env
+.env.local
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Backup
+*.backup
+*.bak
+
+# npm CLI package files
+cli.js
+postinstall.js
+package-cli.json
+README-CLI.md
+run-go-tui.sh

@@ -1,21 +1,58 @@
 {
-  "name": "tui-message-client",
+  "name": "cicy",
   "version": "1.0.0",
-  "description": "TUI client for sending messages to Express server",
+  "description": "CICY - MCP Message Communication System",
   "main": "server.js",
+  "bin": {
+    "cicy-server": "./server.js"
+  },
   "scripts": {
     "start": "node server.js",
     "client": "node client.js",
     "client:cli": "node client-cli.js",
     "client:mcp": "node client-mcp.js",
     "client:tui": "node client-tui.js",
+    "client:remote": "node client-remote.js",
     "dev:server": "npx nodemon --watch server.js server.js",
     "dev:client": "npx nodemon --watch client.js --exec 'node client.js'",
     "dev:cli": "npx nodemon --watch client-cli.js client-cli.js",
     "dev:tui": "npx nodemon --watch client-tui.js client-tui.js",
     "dev:mcp": "npm run dev:server & node client-mcp.js",
-    "dev": "npm run dev:server & npm run dev:client"
+    "dev": "npm run dev:server & npm run dev:client",
+    "test": "./test.sh"
   },
+  "keywords": [
+    "mcp",
+    "model-context-protocol",
+    "tui",
+    "terminal",
+    "message",
+    "communication",
+    "server",
+    "client",
+    "json-rpc"
+  ],
+  "author": "CICY Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/cicy.git"
+  },
+  "bugs": {
+    "url": "https://github.com/yourusername/cicy/issues"
+  },
+  "homepage": "https://github.com/yourusername/cicy#readme",
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "files": [
+    "server.js",
+    "client-tui.js",
+    "client-remote.js",
+    "README.md",
+    "AGENTS.md",
+    "test.sh"
+  ],
   "dependencies": {
     "express": "^4.18.2",
     "blessed": "^0.1.81",

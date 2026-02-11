@@ -1,0 +1,41 @@
+{
+  "name": "cicy-cli",
+  "version": "1.0.0",
+  "description": "CICY - MCP Message Communication System CLI",
+  "main": "cli.js",
+  "bin": {
+    "cicy": "./cli.js"
+  },
+  "scripts": {
+    "postinstall": "node postinstall.js"
+  },
+  "keywords": [
+    "mcp",
+    "tui",
+    "cli",
+    "message",
+    "communication",
+    "bubble-tea",
+    "go"
+  ],
+  "author": "CICY Team",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourusername/cicy.git"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "os": [
+    "darwin",
+    "linux",
+    "win32"
+  ],
+  "files": [
+    "cli.js",
+    "postinstall.js",
+    "bin/",
+    "README-CLI.md"
+  ]
+}

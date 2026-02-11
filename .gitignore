@@ -7,6 +7,10 @@ package-lock.json
 dist/
 build/
 
+# Go
+tui-go/cicy-tui
+tui-go/cicy-tui.exe
+
 # Logs
 *.log
 temp/logs/

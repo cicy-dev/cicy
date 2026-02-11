@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 13001;
@@ -319,8 +321,8 @@ function getRandomResponse() {
     return responses[Math.floor(Math.random() * responses.length)];
 }
 
-app.post('/message', (req, res) => {
-    const { message } = req.body;
+app.post('/message', async (req, res) => {
+    const { message, sleep } = req.body;
     if (message) {
         messages.push({
             type: 'text',
@@ -329,8 +331,13 @@ app.post('/message', (req, res) => {
             id: messages.length + 1
         });
         console.log(`[${new Date().toLocaleTimeString()}] Received: ${message}`);
-        
-        // 随机选择一个回复
+
+        if (sleep) {
+            const sleepTime = parseInt(sleep) || 10000;
+            console.log(`[${new Date().toLocaleTimeString()}] Sleeping for ${sleepTime}ms...`);
+            await new Promise(resolve => setTimeout(resolve, sleepTime));
+        }
+
         const reply = getRandomResponse();
         res.json({ success: true, message: reply });
     } else {
