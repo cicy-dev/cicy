@@ -4,10 +4,14 @@
   "description": "CICY - MCP Message Communication System",
   "main": "server.js",
   "bin": {
-    "cicy-server": "./server.js"
+    "cicy": "./cicy-server.sh",
+    "cicy-server": "./cicy-server.sh"
   },
   "scripts": {
-    "start": "node server.js",
+    "start": "./cicy-server.sh",
+    "start:node": "node server.js",
+    "start:go": "./server-go/cicy-server",
+    "build:go": "cd server-go && go build -o cicy-server .",
     "client": "node client.js",
     "client:cli": "node client-cli.js",
     "client:mcp": "node client-mcp.js",
@@ -47,6 +51,8 @@
   },
   "files": [
     "server.js",
+    "server-go/",
+    "cicy-server.sh",
     "client-tui.js",
     "client-remote.js",
     "README.md",
@@ -60,5 +66,6 @@
   },
   "devDependencies": {
     "nodemon": "^3.0.0"
-  }
+  },
+  "postinstall": "if command -v go &> /dev/null && [ -f \"server-go/main.go\" ]; then cd server-go && go build -o cicy-server . && cd ..; fi"
 }
